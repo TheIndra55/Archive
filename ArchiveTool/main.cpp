@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <cstring>
+#include <list>
 
 #include "../Archive/archive.hpp"
 
@@ -59,7 +61,7 @@ int main(int argc, char* argv[])
 			delete[] buffer;
 		}
 	}
-	catch (std::exception e)
+	catch (std::exception& e)
 	{
 		std::cout << PREFIX_ERROR << "Cannot extract archive: " << e.what() << std::endl;
 		system("pause");
