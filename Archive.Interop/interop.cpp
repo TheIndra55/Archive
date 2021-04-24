@@ -41,8 +41,29 @@ ARCHIVE_EXPORT ArchiveFile* archive_get_files(Archive* archive, int* num)
 		files->push_back(file.second);
 	}
 
-	*num = files->size();
+	*num = static_cast<int>(files->size());
 	return &(*files)[0];
+}
+
+ARCHIVE_EXPORT int archive_read_file(Archive* archive, char* file, char** buf)
+{
+	if (!archive->FileExists(file))
+	{
+		return -1;
+	}
+	
+	auto size = archive->GetFileSize(file);
+	auto buffer = new char[size];
+
+	archive->ReadFile(file, buffer);
+
+	*buf = buffer;
+	return size;
+}
+
+ARCHIVE_EXPORT void archive_cleanup_native_memory(void* ptr)
+{
+	delete[] ptr;
 }
 
 }

@@ -19,5 +19,11 @@ namespace Archive.Managed
 
         [DllImport("Archive.Interop", EntryPoint = "archive_close")]
         public static extern void ArchiveClose(IntPtr archive);
+
+        [DllImport("Archive.Interop", EntryPoint = "archive_read_file")]
+        public static extern int ArchiveReadFile(IntPtr archive, string file, ref IntPtr buf);
+
+        [DllImport("Archive.Interop", EntryPoint = "archive_cleanup_native_memory")]
+        public static extern void Cleanup(IntPtr ptr);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,12 +42,31 @@ namespace Archive.Managed
             var size = Marshal.SizeOf(typeof(ArchiveFile));
             for(int i = 0; i < num; i++)
             {
-                IntPtr ins = new IntPtr(ptr.ToInt64() + i * size);
-                files[i] = Marshal.PtrToStructure<ArchiveFile>(ins);
+                files[i] = Marshal.PtrToStructure<ArchiveFile>(IntPtr.Add(ptr, i * size));
             }
 
-            // TODO cleanup memory located by C interop
+            // free memory allocated by interop
+            InteropMethods.Cleanup(ptr);
+
             return files.ToList();
+        }
+
+        public byte[] ReadFile(string file)
+        {
+            IntPtr buf = IntPtr.Zero;
+            var size = InteropMethods.ArchiveReadFile(_instance, file, ref buf);
+
+            if(size == -1)
+            {
+                // TODO should we use this exception type?
+                throw new FileNotFoundException();
+            }
+
+            var data = new byte[size];
+            Marshal.Copy(buf, data, 0, size);
+
+            InteropMethods.Cleanup(buf);
+            return data;
         }
     }
 }

@@ -1,5 +1,6 @@
 workspace "Archive"
 	configurations { "Debug", "Release" }
+	architecture "x86_64"
 
 project "Archive"
 	location "Archive"
