@@ -1,4 +1,3 @@
-#include <fstream>
 #include <iostream>
 #include <cstring>
 
@@ -96,7 +95,7 @@ void Archive::ReadHeader()
 	}
 
 	// read all files
-	for (int i = 0; i < m_header.num_files; i++)
+	for (unsigned int i = 0; i < m_header.num_files; i++)
 	{
 		ArchiveFile file{};
 		m_stream.read(reinterpret_cast<char*>(&file), sizeof(ArchiveFile));
