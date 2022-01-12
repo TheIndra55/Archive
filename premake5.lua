@@ -10,6 +10,9 @@ project "Archive"
 	
 	files { "Archive/*.cpp", "Archive/*.hpp" }
 	
+	includedirs { "vendor/zstd/lib" }
+	links { "zstd" }
+	
     filter "configurations:Debug"
         defines { "DEBUG", "_DEBUG" }
         symbols "On"
@@ -24,10 +27,11 @@ project "ArchiveTool"
 	kind "ConsoleApp"
 	
 	language "C++"
-	links { "Archive" }
+	links { "Archive", "zstd" }
 	cppdialect "C++17"
 	
 	files { "ArchiveTool/*.cpp", "ArchiveTool/*.hpp" }
+	includedirs { "vendor/zstd/lib", "Archive" }
 
     filter "configurations:Debug"
         defines { "DEBUG", "_DEBUG" }
@@ -61,3 +65,5 @@ externalproject "Archive.Managed"
 	uuid "9A19103F-16F7-4668-BE54-9A1E7A4F7556"
 	kind "SharedLib"
 	language "C#"
+	
+dofile "zstd.lua"

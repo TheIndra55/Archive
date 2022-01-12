@@ -4,7 +4,8 @@
 #include <cstring>
 #include <list>
 
-#include "../Archive/archive.hpp"
+#include <zstd.h>
+#include <archive.hpp>
 
 #define PREFIX_ERROR "\033[91merror:\033[0m "
 

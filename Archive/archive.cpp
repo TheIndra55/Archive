@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 
+#include <zstd.h>
+
 #include "archive.hpp"
 
 // Opens an archive from a file
