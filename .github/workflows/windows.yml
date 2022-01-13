@@ -1,0 +1,42 @@
+name: Windows
+
+on: [push]
+
+jobs:
+    build:
+        runs-on: windows-latest
+        
+        steps:
+        - uses: actions/checkout@v2
+          with:
+            submodules: true
+        
+        - uses: microsoft/setup-msbuild@v1.0.2
+        - uses: ilammy/msvc-dev-cmd@v1
+        
+        - name: Download premake5
+          run: |
+            curl.exe -o premake5.zip -L https://github.com/premake/premake-core/releases/download/v5.0.0-beta1/premake-5.0.0-beta1-windows.zip
+            tar -xf premake5.zip
+        
+        - name: Generate project files
+          run: .\premake5 vs2019
+          
+        - name: Build
+          run: |
+            MSBuild /p:Configuration=Release Archive/Archive.vcxproj
+            MSBuild /p:Configuration=Release ArchiveTool/ArchiveTool.vcxproj
+            
+        - name: actions/upload-artifact@v2
+          with:
+            name: StaticLib
+            path: |
+                Archive/bin/Release/Archive.lib
+                Archive/bin/Release/Archive.pdb
+                
+        - name: actions/upload-artifact@v2
+          with:
+            name: Exe
+            path: |
+                ArchiveTool/bin/Release/ArchiveTool.exe
+                ArchiveTool/bin/Release/ArchiveTool.pdb

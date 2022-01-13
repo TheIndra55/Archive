@@ -1,0 +1,38 @@
+name: Linux
+
+on: [push]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        
+        steps: 
+        - uses: actions/checkout@v2
+          with:
+            submodules: true
+            
+        - name: Install dependencies
+          run: sudo apt-get install -y make gcc
+          
+        - name: Download premake5
+          run: |
+            curl -o premake5.zip -L https://github.com/premake/premake-core/releases/download/v5.0.0-beta1/premake-5.0.0-beta1-linux.tar.gz
+            tar -xf premake5.zip
+        
+        - name: Generate project files
+          run: ./premake5 gmake2
+          
+        - name: Build
+          run: make Archive ArchiveTool
+          
+        - name: actions/upload-artifact@v2
+          with:
+            name: StaticLib
+            path: |
+                Archive/bin/Release//libArchive.a
+                
+        - name: actions/upload-artifact@v2
+          with:
+            name: Exe
+            path: |
+                ArchiveTool/bin/Release/ArchiveTool
