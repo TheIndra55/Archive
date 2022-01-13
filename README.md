@@ -8,7 +8,7 @@ A simple archive file format to be used in applications, this repo contains the 
 Archive archive("game.dat");
 
 auto size = archive.GetFileSize("player.obj");
-auto data = char[size];
+auto data = new char[size];
 
 archive.ReadFile("player.obj", data);
 ```
@@ -33,5 +33,4 @@ ArchiveTool pack [input file...] -- pack an archive file with all files specifie
 
 ## Future goals
 
-* File compression
 * Improved file reading (reading files in chunks, queuing io operations)

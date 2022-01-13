@@ -98,7 +98,10 @@ int PackArchive(int argc, char* argv[])
 	std::ofstream of("archive.dat", std::ios::binary);
 
 	// write header
-	ArchiveHeader header{ 1, files.size() };
+	ArchiveHeader header;
+	header.version = ARCHIVE_VERSION;
+	header.num_files = static_cast<uint32_t>(files.size());
+
 	uint32_t magic = ARCHIVE_MAGIC;
 	of.write(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
 	of.write(reinterpret_cast<char*>(&header), sizeof(ArchiveHeader));
@@ -115,16 +118,32 @@ int PackArchive(int argc, char* argv[])
 		auto size = std::filesystem::file_size(file);
 		auto offset = of.tellp();
 
+		// read the input file
 		std::ifstream ifs(file, std::ios::binary);
 
 		char* data = new char[static_cast<uint32_t>(size)];
 		ifs.read(data, size);
-		of.write(data, size);
+
+		// allocate new buffer for compressed data
+		auto bounds = ZSTD_compressBound(size);
+		auto compressedData = new char[bounds];
+
+		auto compressedSize = ZSTD_compress(compressedData, bounds, data, size, 1);
+		of.write(compressedData, compressedSize);
+
+		std::cout << "Compressed " << file << " " << size << " -> " << compressedSize << std::endl;
 
 		delete[] data;
+		delete[] compressedData;
 
 		auto name = file.c_str();
-		ArchiveFile info{ jenkins_one_at_a_time_hash(name, strlen(name)), static_cast<uint32_t>(offset), static_cast<uint32_t>(size), 0xFFFFFFFF };
+
+		ArchiveFile info;
+		info.name = jenkins_one_at_a_time_hash(name, strlen(name));
+		info.offset = static_cast<uint32_t>(offset);
+		info.size = static_cast<uint32_t>(size);
+		info.compressed_size = static_cast<uint32_t>(compressedSize);
+
 		file_info.push_back(info);
 
 		ifs.close();

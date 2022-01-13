@@ -33,14 +33,24 @@ bool Archive::ReadFile(int hash, void* data)
 	}
 
 	auto info = m_files.find(hash)->second;
+	m_stream.seekg(info.offset);
 
-	if (info.reserved != -1)
+	if (info.compressed_size == -1)
 	{
-		throw std::runtime_error("compressed files are not supported");
+		// file is not compressed
+		m_stream.read(reinterpret_cast<char*>(data), info.size);
+	}
+	else
+	{
+		// TODO without extra relocation?
+		auto compressedData = new char[info.compressed_size];
+		m_stream.read(reinterpret_cast<char*>(compressedData), info.compressed_size);
+
+		ZSTD_decompress(data, info.size, compressedData, info.compressed_size);
+
+		delete[] compressedData;
 	}
 
-	m_stream.seekg(info.offset);
-	m_stream.read(reinterpret_cast<char*>(data), info.size);
 	return true;
 }
 

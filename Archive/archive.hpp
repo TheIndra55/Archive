@@ -19,7 +19,7 @@ struct ArchiveFile
 	uint32_t name; // hash of the file path
 	uint32_t offset;
 	uint32_t size;
-	uint32_t reserved; // reserved for future compression
+	uint32_t compressed_size;
 };
 
 class Archive
