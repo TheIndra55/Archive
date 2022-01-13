@@ -27,14 +27,14 @@ jobs:
         MSBuild /p:Configuration=Release Archive/Archive.vcxproj
         MSBuild /p:Configuration=Release ArchiveTool/ArchiveTool.vcxproj
         
-    - name: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v2
       with:
         name: StaticLib
         path: |
           Archive/bin/Release/Archive.lib
           Archive/bin/Release/Archive.pdb
             
-    - name: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v2
       with:
         name: Exe
         path: |
