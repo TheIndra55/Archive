@@ -34,6 +34,9 @@ project "zstd"
 		"vendor/zstd/lib/dictBuilder/zdict.c",	
 	}
 	
+	-- TODO use filter system:not windows and include right files for Linux
+	defines { "ZSTD_DISABLE_ASM" }
+	
     filter "configurations:Debug"
         defines { "DEBUG", "_DEBUG" }
         symbols "On"
